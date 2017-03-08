@@ -8,17 +8,17 @@
 		margin: 0;
 		padding: 0;
 	}
-	
+
 	h1 {
 		margin: 0;
 		padding: 0;
-		font: 70px verdana, arial, helvetica, sans-serif; 
+		font: 70px verdana, arial, helvetica, sans-serif;
 		text-align: center;
-		color: #999; 
+		color: #999;
 	}
-	
+
 	* {
-		font: 18px verdana, arial, helvetica, sans-serif; 
+		font: 18px verdana, arial, helvetica, sans-serif;
 	}
 	</style>
 </head>
@@ -29,6 +29,10 @@
 <div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
 <input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
 <input type="button" onclick="click1();" value="Go" style="width:8%;">
+<br><br>
+<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
+<input type="button" onclick="click2();" value="Generate">
+<p>Please use the second field above for multiple queries separated by spaces. The program will download a text file with the first two definitions for each word.</p>
 <p id="out" style="text-align:left"></p>
 </div>
 </body>
@@ -48,6 +52,10 @@ function click1()
 
 		$("#out").html(newHtml);
 	});
+}
+
+function click2() {
+	//what happens when you click the second button
 }
 
 $(document).ready(function () {
