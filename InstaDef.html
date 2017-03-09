@@ -25,26 +25,31 @@
 
 
 <body>
-<center><h1>InstaDef</h1></center>
-<div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
-<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
-<input type="button" onclick="click1();" value="Go" style="width:8%;">
-<br><br>
-<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
-<input type="button" onclick="click2();" value="Generate">
-<p>Please use the second field above for multiple queries separated by spaces. The program will download a text file with the first two definitions for each word.</p>
-<p id="out" style="text-align:left"></p>
-</div>
+	<center><h1>InstaDef</h1></center>
+	<div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
+		<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
+		<input id="button1" type="button" value="Go" style="width:8%;"></input>
+		<br><br>
+		<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
+		<input type="button" onclick="click2();" value="Generate">
+		<p>Please use the second field above for multiple queries separated by spaces. The program will download a text file with the first two definitions for each word.</p>
+		<p id="out" style="text-align:left"></p>
+	</div>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script>
 var cors = 'https://cors-anywhere.herokuapp.com/';
 
-function click1()
+$("#button1").click(function() {
+	click1($("#entryText").val());
+});
+
+function click1(entryText)
 {
-	$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI($('#entryText').val()) + '&wordLang=en&definitionLang=en', function(data){
-		var expData = data["responses"][0]["data"]["autodefine"];
+	var expData;
+	$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(entryText) + '&wordLang=en&definitionLang=en', function(data){
+		expData = data["responses"][0]["data"]["autodefine"];
 		var newHtml = "";
 
 		for(i=0; i<expData.length; i++)
@@ -52,14 +57,34 @@ function click1()
 
 		$("#out").html(newHtml);
 	});
+
 }
+
 
 function click2() {
 	//what happens when you click the second button
+	$("#out").empty();
+	var textArray = $("#multipleQueryField").val().split(",");
+	alert(textArray.length);
+	for (var x = 0; x < textArray.length; x++) {loop(textArray[x]);}
+		function loop(word) {
+		$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(word) + '&wordLang=en&definitionLang=en', function(data){
+			expData = data["responses"][0]["data"]["autodefine"];
+			var newHtml = "";
+
+			for(i=0; i<2; i++) {
+				$("#out").append("<p>&#8226 " + expData[i]["definition"] + "</p>");
+			}
+
+			//$("#out").append(newHtml);
+		});
+	}
 }
 
 $(document).ready(function () {
 	$("#entryText").focus();
 });
+
 </script>
+
 </html>
