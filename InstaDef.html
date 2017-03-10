@@ -1,89 +1,96 @@
 <html>
+
 <head>
 	<title>InstaDef</title>
 	<style>
-	html,body{
-		background-color:#d5e9f0;
-		width:100%; height:100%;
-		margin: 0;
-		padding: 0;
-	}
+		html,
+		body {
+			background-color: #d5e9f0;
+			width: 100%;
+			height: 100%;
+			margin: 0;
+			padding: 0;
+		}
 
-	h1 {
-		margin: 0;
-		padding: 0;
-		font: 70px verdana, arial, helvetica, sans-serif;
-		text-align: center;
-		color: #999;
-	}
+		h1 {
+			margin: 0;
+			padding: 0;
+			font: 70px verdana, arial, helvetica, sans-serif;
+			text-align: center;
+			color: #999;
+		}
 
-	* {
-		font: 18px verdana, arial, helvetica, sans-serif;
-	}
+		* {
+			font: 18px verdana, arial, helvetica, sans-serif;
+		}
 	</style>
 </head>
 
 
 <body>
-	<center><h1>InstaDef</h1></center>
+	<center>
+		<h1>InstaDef</h1></center>
 	<div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
 		<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
 		<input id="button1" type="button" value="Go" style="width:8%;"></input>
 		<br><br>
-		<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
+		<input type="text" id="multipleQueryField" style="width:70%;">
 		<input type="button" onclick="click2();" value="Generate">
-		<p>Please use the second field above for multiple queries separated by spaces. The program will download a text file with the first two definitions for each word.</p>
+		<p id="direction_paragraph">
+			<font size="4">Please use the second field above for multiple queries separated by commas. Returns 2 definitions for each word.</font>
+		</p>
 		<p id="out" style="text-align:left"></p>
 	</div>
 </body>
 
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script>
-var cors = 'https://cors-anywhere.herokuapp.com/';
+	var cors = 'https://cors-anywhere.herokuapp.com/';
 
-$("#button1").click(function() {
-	click1($("#entryText").val());
-});
-
-function click1(entryText)
-{
-	var expData;
-	$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(entryText) + '&wordLang=en&definitionLang=en', function(data){
-		expData = data["responses"][0]["data"]["autodefine"];
-		var newHtml = "";
-
-		for(i=0; i<expData.length; i++)
-			newHtml += "<p>&#8226 " + expData[i]["definition"] + "</p>";
-
-		$("#out").html(newHtml);
+	$("#button1").click(function() {
+		click1($("#entryText").val());
 	});
 
-}
-
-
-function click2() {
-	//what happens when you click the second button
-	$("#out").empty();
-	var textArray = $("#multipleQueryField").val().split(",");
-	alert(textArray.length);
-	for (var x = 0; x < textArray.length; x++) {loop(textArray[x]);}
-		function loop(word) {
-		$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(word) + '&wordLang=en&definitionLang=en', function(data){
+	function click1(entryText) {
+		var expData;
+		$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(entryText) + '&wordLang=en&definitionLang=en', function(data) {
 			expData = data["responses"][0]["data"]["autodefine"];
 			var newHtml = "";
-
-			for(i=0; i<2; i++) {
-				$("#out").append("<p>&#8226 " + expData[i]["definition"] + "</p>");
-			}
-
-			//$("#out").append(newHtml);
+			for (i = 0; i < expData.length; i++)
+				newHtml += "<p>&#8226 " + expData[i]["definition"] + "</p>";
+			$("#out").html(newHtml);
 		});
-	}
-}
 
-$(document).ready(function () {
-	$("#entryText").focus();
-});
+	}
+
+
+	function click2() {
+		//what happens when you click the second button
+		$("#out").empty();
+		var textArray = $("#multipleQueryField").val().trim().split(",");
+		//alert(textArray.length);
+		for (var x = 0; x < textArray.length; x++) {
+			loop(textArray[x].trim());
+		}
+	}
+
+	function loop(word) { //separate method to deal with http get asynchronous issue (continues only after http request is complete)
+		$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(word) + '&wordLang=en&definitionLang=en')
+			.then(function(data) {
+				expData = data["responses"][0]["data"]["autodefine"];
+				var newHtml = "";
+				for (var i = 0; i < 2; i++) {
+					$("#out").append("<p>&#8226 " + word + ": " + expData[i]["definition"] + "</p>");
+				}
+			});
+	}
+
+	$(document).ready(function() {
+		$("#entryText").focus();
+	});
+</script>
+
+</html>
 
 </script>
 
