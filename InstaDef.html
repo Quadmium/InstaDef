@@ -20,7 +20,8 @@
 			color: #999;
 		}
 
-		* {
+		p,
+		input {
 			font: 18px verdana, arial, helvetica, sans-serif;
 		}
 	</style>
@@ -31,13 +32,13 @@
 	<center>
 		<h1>InstaDef</h1></center>
 	<div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
-		<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)click1();">
+		<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)enterKeyPress();">
 		<input id="button1" type="button" value="Go" style="width:8%;"></input>
 		<br><br>
-		<input type="text" id="multipleQueryField" style="width:70%;">
-		<input type="button" onclick="click2();" value="Generate">
+		<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)enterKeyPress();">
+		<input id="button2" type="button" value="Generate">
 		<p id="direction_paragraph">
-			<font size="4">Please use the second field above for multiple queries separated by commas. Returns 2 definitions for each word.</font>
+			<font size="4"><b>Please use the second field above for multiple queries separated by commas. Returns 2 definitions for each word.</b></font>
 		</p>
 		<p id="out" style="text-align:left"></p>
 	</div>
@@ -48,11 +49,16 @@
 	var cors = 'https://cors-anywhere.herokuapp.com/';
 
 	$("#button1").click(function() {
-		click1($("#entryText").val());
+		click1();
 	});
 
-	function click1(entryText) {
+	$("#button2").click(function() {
+		click2();
+	});
+
+	function click1() {
 		var expData;
+		var entryText = $("#entryText").val().trim();
 		$.get(cors + 'https://quizlet.com/webapi/3.1/autodefine?word=' + encodeURI(entryText) + '&wordLang=en&definitionLang=en', function(data) {
 			expData = data["responses"][0]["data"]["autodefine"];
 			var newHtml = "";
@@ -60,7 +66,6 @@
 				newHtml += "<p>&#8226 " + expData[i]["definition"] + "</p>";
 			$("#out").html(newHtml);
 		});
-
 	}
 
 
@@ -80,10 +85,18 @@
 				expData = data["responses"][0]["data"]["autodefine"];
 				var newHtml = "";
 				for (var i = 0; i < 2; i++) {
-					$("#out").append("<p>&#8226 " + word + ": " + expData[i]["definition"] + "</p>");
+					$("#out").append("<p>&#8226<b> " + word + ":</b> " + expData[i]["definition"] + "</p>");
 				}
 			});
 	}
+
+	function enterKeyPress() {
+		if ($("#entryText").val()) click1();
+		else if ($("#multipleQueryField").val()) click2();
+		else alert("Please type something in!");
+	}
+
+
 
 	$(document).ready(function() {
 		$("#entryText").focus();
