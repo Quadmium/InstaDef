@@ -32,10 +32,10 @@
 	<center>
 		<h1>InstaDef</h1></center>
 	<div style="margin: 0 auto; width: 100%; margin:0; text-align:center;">
-		<input type="text" id="entryText" style="width:70%;" onkeypress="if(event.keyCode==13)enterKeyPress();">
+		<input type="text" id="entryText" style="width:70%;">
 		<input id="button1" type="button" value="Go" style="width:8%;"></input>
 		<br><br>
-		<input type="text" id="multipleQueryField" style="width:70%;" onkeypress="if(event.keyCode==13)enterKeyPress();">
+		<input type="text" id="multipleQueryField" style="width:70%;">
 		<input id="button2" type="button" value="Generate">
 		<p id="direction_paragraph">
 			<font size="4"><b>Please use the second field above for multiple queries separated by commas. Returns 2 definitions for each word.</b></font>
@@ -46,6 +46,21 @@
 
 <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
 <script>
+	//focuses cursor on the entry text box
+	$(document).ready(function() {
+		$("#entryText").focus();
+		//keypress sent from text fields
+		$("#entryText").keypress(function(e) {
+			if (e.keyCode == 13)
+				click1();
+		});
+		$("#multipleQueryField").keypress(function(e) {
+			if (e.keyCode == 13)
+				click2();
+		});
+	});
+
+
 	var cors = 'https://cors-anywhere.herokuapp.com/';
 
 	$("#button1").click(function() {
@@ -95,12 +110,6 @@
 		else if ($("#multipleQueryField").val()) click2();
 		else alert("Please type something in!");
 	}
-
-
-
-	$(document).ready(function() {
-		$("#entryText").focus();
-	});
 </script>
 
 </html>
