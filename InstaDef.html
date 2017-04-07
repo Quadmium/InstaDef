@@ -21,7 +21,8 @@
 		}
 
 		p,
-		input {
+		input,
+		ol {
 			font: 18px verdana, arial, helvetica, sans-serif;
 		}
 	</style>
@@ -40,7 +41,9 @@
 		<p id="direction_paragraph">
 			<font size="4"><b>Please use the second field above for multiple queries separated by commas. Returns 2 definitions for each word.</b></font>
 		</p>
-		<p id="out" style="text-align:left"></p>
+		<p id="out" style="text-align:left">
+			<ol id="orderedList" style="text-align:left"></ol>
+		</p>
 	</div>
 </body>
 
@@ -78,15 +81,15 @@
 			expData = data["responses"][0]["data"]["autodefine"];
 			var newHtml = "";
 			for (i = 0; i < expData.length; i++)
-				newHtml += "<p>&#8226 " + expData[i]["definition"] + "</p>";
-			$("#out").html(newHtml);
+				newHtml += "<li> " + expData[i]["definition"] + "</li><br>";
+			$("#orderedList").html(newHtml);
 		});
 	}
 
 
 	function click2() {
 		//what happens when you click the second button
-		$("#out").empty();
+		$("#orderedList").empty();
 		var textArray = $("#multipleQueryField").val().trim().split(",");
 		//alert(textArray.length);
 		for (var x = 0; x < textArray.length; x++) {
@@ -100,7 +103,7 @@
 				expData = data["responses"][0]["data"]["autodefine"];
 				var newHtml = "";
 				for (var i = 0; i < 2; i++) {
-					$("#out").append("<p>&#8226<b> " + word + ":</b> " + expData[i]["definition"] + "</p>");
+					$("#orderedList").append("<li><b> " + word + ":</b> " + expData[i]["definition"] + "</li><br>");
 				}
 			});
 	}
