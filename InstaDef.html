@@ -90,10 +90,12 @@
 	function click2() {
 		//what happens when you click the second button
 		$("#orderedList").empty();
-		var textArray = $("#multipleQueryField").val().trim().split(",");
+		window.textArray = $("#multipleQueryField").val().trim().split(",");
 		//alert(textArray.length);
+		window.click2Array = [];
 		for (var x = 0; x < textArray.length; x++) {
-			loop(textArray[x].trim());
+			textArray[x] = textArray[x].trim();
+			loop(textArray[x]);
 		}
 	}
 
@@ -103,8 +105,27 @@
 				expData = data["responses"][0]["data"]["autodefine"];
 				var newHtml = "";
 				for (var i = 0; i < 2; i++) {
-					$("#orderedList").append("<li><b> " + word + ":</b> " + expData[i]["definition"] + "</li><br>");
+					newHtml += "<li><b> " + word + ":</b> " + expData[i]["definition"] + "</li><br>";
 				}
+
+				// 2 entries for each word
+				var foundInsert = -1;
+				var newWordIndex = window.textArray.indexOf(word);
+				for(var k=0; k<window.click2Array.length && foundInsert == -1; k++)
+				{
+					var curWordIndex = window.textArray.indexOf(window.click2Array[k][0]);
+					if(curWordIndex > newWordIndex)
+						foundInsert = k;
+				}
+
+				if(foundInsert != -1)
+					window.click2Array.splice(foundInsert, 0, [word, newHtml]);
+				else
+					window.click2Array.push([word, newHtml]);
+				$("#orderedList").empty();
+
+				for(var i=0; i<window.click2Array.length; i++)
+					$("#orderedList").append(window.click2Array[i][1]);
 			});
 	}
 </script>
